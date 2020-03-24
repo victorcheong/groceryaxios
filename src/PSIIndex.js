@@ -10,7 +10,7 @@ export default{
           labels:[],
           datasets: [
             {
-              label: 'PSI Readings-Singapore',
+              label: 'Transport in Singapore',
                data:[],
               //backgroundColor:['aqua','lightgreen','red','orange'],
               borderWidth:0.5,
@@ -36,13 +36,15 @@ export default{
     methods:{
     
     fetchData : function(){
-        axios.get('https://api.data.gov.sg/v1/environment/psi').then(response=>{
-        this.results=response.data.items[0].readings.psi_twenty_four_hourly
+        axios.get('http://data.gov.sg/api/action/datastore_search?resource_id=552b8662-3cbc-48c0-9fbb-abdc07fb377a').then(response=>{
+        this.results=response.data.result.records
         //console.log(response.data)
-        //console.log(this.results)
-        for(let key in this.results){
-            this.chartdata.datasets[0].data.push(this.results[key])
-            this.chartdata.labels.push(key+'')
+        // console.log(this.results)
+        for(var i = 0; i < this.results.length; i++){
+            if(this.results[i]['type_of_public_transport'] == 'MRT') {
+              this.chartdata.datasets[0].data.push(this.results[i]['average_ridership'])
+              this.chartdata.labels.push(this.results[i]['year'] + '')
+            }
             
         }
         this.renderChart(this.chartdata,this.options)
